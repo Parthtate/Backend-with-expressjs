@@ -3,9 +3,11 @@
 
 // Code paradigme using Promise 
 const asyncHandler = (requestHandler) => {
-    (req, res, next) => {
-        Promise.resolve(requestHandler(req, res, next)).catch((error) => next(error));
+    const returnResponce = (req, res, next) => {
+        Promise.resolve(requestHandler(req, res, next))
+        .catch((error) => next(error));
     }
+     return returnResponce 
 }
 
 export {asyncHandler}
