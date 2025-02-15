@@ -5,9 +5,6 @@ import { uploadOnCloudinary } from "../utils/cloudinary.services.js"
 import { ApiResponce } from "../utils/ApiResponce.js";
 
 
-
-
-
 const registerUser = asyncHandler( async (req, res) => {
     // Algorithm for user register
 
@@ -22,6 +19,8 @@ const registerUser = asyncHandler( async (req, res) => {
     // return responce
 
    const {username, email, password, fullName} = req.body
+//    console.log("REQUEST BODY: ", req.body);
+   
 
     // if (fullName === "") { 
     //     throw new ApiError(400, "fullname is required")
@@ -41,12 +40,15 @@ const registerUser = asyncHandler( async (req, res) => {
     })
 
     if (existedUser) {
-        throw new ApiError(409, "User with email or username already exists! ")
+        throw new ApiError(409, "User with the same email ID or username already exists!")
     }
-
+ 
+    // console.log("REQUEST FILES: ", req.files);
+    
     // get files from locally using multer, multer add superpowers in req. 
-    const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    const avatarLocalPath = req.files?.avatar?.[0]?.path;
+    const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar file is required")
@@ -77,14 +79,10 @@ const registerUser = asyncHandler( async (req, res) => {
     if (!createdUser) {
         throw new ApiError(500, "Something went wrong while registering the user")
     }
-   
     return res.status(201).json(
         new ApiResponce(200, createdUser, "User registered succesfully")
     )
-
-
 })
 
 export {registerUser}
 
-// 
