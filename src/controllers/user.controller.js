@@ -235,7 +235,7 @@ const changeCurrentUserPassword = asyncHandler( async (req, res) => {
 
     const {oldPassword, newPassword} = req.body;
     const user = await User.findById(req.user?._id)
-    const isPasswordCorrect = user.isPasswordCorrect(oldPassword)
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
 
     if (!isPasswordCorrect) {
         throw new ApiError(400, "Invalid Password")
@@ -256,9 +256,9 @@ const getCurrentUser = asyncHandler( async (req, res) => {
 })
 
 const updateAccountDetails = asyncHandler( async (req, res) => {
-    const {fullName, email} = req.body;
+    const {fullName} = req.body;
 
-    if (!fullName || !email) {
+    if (!fullName) {
         throw new ApiError(400, "All fields are required")
     }
 
@@ -266,8 +266,7 @@ const updateAccountDetails = asyncHandler( async (req, res) => {
         req.user?._id,
         {
             $set: {
-                fullName: fullName,
-                email: email
+                fullName: fullName
             }
         },
         {new: true}
@@ -428,14 +427,11 @@ const getUserChannelProfile = asyncHandler( async (req, res) => {
 
 const getUserWatchHistory = asyncHandler( async (req, res) => {
 
-    if (!mongoose.isValidObjectId(req.user._id)) {
-        throw new ApiError(400, "Invalid user Id")
-    }
-
+    
     const user = await User.aggregate([
         {
             $match: {
-                _id: new mongoose.Types.ObjectId(req.user._id)
+                _id: new mongoose.Types.ObjectId(String(req.user._id))
             }
         },
         {
@@ -465,7 +461,7 @@ const getUserWatchHistory = asyncHandler( async (req, res) => {
                     },
                     {
                         $addFields: {
-                            $first: "$owner"
+                            owner: { $first: "$owner" }
                         }
                     }
                 ]

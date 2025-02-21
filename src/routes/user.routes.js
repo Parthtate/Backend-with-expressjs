@@ -2,8 +2,9 @@ import { Router } from "express";
 import { registerUser,
      loginUser,
       logoutUser,
-       refreshAccessToken, changeCurrentUserPassword,
-        getCurrentUser,
+       refreshAccessToken,
+        changeCurrentUserPassword,
+         getCurrentUser,
          updateAccountDetails,
           updateUserAvatar,
            updateUserCoverImage, getUserChannelProfile, getUserWatchHistory  } from "../controllers/user.controller.js"
@@ -49,7 +50,7 @@ router.route("/cover-image").patch(verifyJWT, upload.single("coverImage"), updat
 
 router.route("/c/:username").get(verifyJWT, getUserChannelProfile)
 
-router.route("/history").gte(verifyJWT, getUserWatchHistory)
+router.route("/history").get(verifyJWT, getUserWatchHistory)
 
 
 export default router
